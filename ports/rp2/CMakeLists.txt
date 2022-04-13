@@ -96,6 +96,7 @@ set(MICROPY_SOURCE_PORT
     machine_spi.c
     machine_timer.c
     machine_uart.c
+    machine_uart_dmx.c
     machine_wdt.c
     main.c
     modmachine.c
@@ -124,6 +125,7 @@ set(MICROPY_SOURCE_QSTR
     ${PROJECT_SOURCE_DIR}/machine_spi.c
     ${PROJECT_SOURCE_DIR}/machine_timer.c
     ${PROJECT_SOURCE_DIR}/machine_uart.c
+    ${PROJECT_SOURCE_DIR}/machine_uart_dmx.c
     ${PROJECT_SOURCE_DIR}/machine_wdt.c
     ${PROJECT_SOURCE_DIR}/modmachine.c
     ${PROJECT_SOURCE_DIR}/modrp2.c
