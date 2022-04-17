@@ -32,8 +32,6 @@
  * - there can be glitches when combining channels (e.g. to 16-bit values)
  * - there is no way to detect a communication timeout
  * - there is no way to detect how many channels have been received
- * - no support for slices as subscript
- * - subscript out of range should throw an IndexError not a TypeError
  * - deinit might not work properly
  * - no support for RDM
  */
@@ -286,13 +284,20 @@ STATIC mp_obj_t machine_uart_dmx_subscr(mp_obj_t self_in, mp_obj_t index, mp_obj
 
     if (value == MP_OBJ_SENTINEL) {
         // load
-
-        if(mp_obj_is_small_int(index)) {
+        if (mp_obj_is_type(index, &mp_type_slice)) {
+            mp_bound_slice_t slice;
+            if (!mp_seq_get_fast_slice_indexes(MAX_DMX_CHANNELS, index, &slice)) {
+                mp_raise_NotImplementedError(MP_ERROR_TEXT("only slices with step=1 (aka None) are supported"));
+            }
+            return mp_obj_new_bytes(self->rx_buffer + slice.start, slice.stop - slice.start);
+        }
+        else if(mp_obj_is_small_int(index)) {
             const mp_int_t i = MP_OBJ_SMALL_INT_VALUE(index);
             if(i >=0 && i < MAX_DMX_CHANNELS) {
                 return MP_OBJ_NEW_SMALL_INT(self->rx_buffer[i]);
             }
         }
+        mp_raise_msg(&mp_type_IndexError, MP_ERROR_TEXT("DMX channel out of range"));
     }
 
     return MP_OBJ_NULL;
